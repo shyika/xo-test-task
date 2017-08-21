@@ -1,5 +1,8 @@
 import React from 'react'
 import {render} from 'react-dom'
-import Root from './components/Root'
+import TicTacToe from './components/TicTacToe'
 
-render(<Root />, document.querySelector('#mount-point'))
+import {Provider} from 'react-redux'
+import store from './store'
+
+render(<Provider store = {store}><TicTacToe /></Provider>, document.querySelector('#mount-point'))

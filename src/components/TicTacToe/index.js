@@ -7,6 +7,10 @@ import Result from '../Result'
 import {checkAndUpdateItem, checkEndOFGame, restartGame} from '../../AC'
 import {getClassesByCombination} from '../../logic/game'
 
+
+import './styles.less'
+
+
 class TicTacToe extends React.Component {
 	static propTypes = {
 		// from connect
@@ -45,22 +49,22 @@ class TicTacToe extends React.Component {
 		})
 
 		return (
-			<div className="container">
-				<div className="row">
-					<div className="col-12 col-sm-12">
-						<h1 class="text-center">Titck tak toe simple game!</h1>
-						<hr/>
+				<div className="container">
+					<div className="row">
+						<div className="col-12 col-sm-12">
+							<h1 class="text-center">Titck tak toe simple game!</h1>
+							<hr/>
+						</div>
 					</div>
-				</div>
-				<div className="row">
-					<div className="cc col-sm-9 col-12 col-lg-5">
-						{done && <Result {...resultParams}/>}
-						<div className="row">
-							{gameMarkup}
+					<div className="row">
+						<div className="cc col-sm-9 col-12 col-lg-5">
+							{done && <Result {...resultParams}/>}
+							<div className="row">
+								{gameMarkup}
+							</div>
 						</div>
 					</div>
 				</div>
-			</div>
 		);
 	}
 }
