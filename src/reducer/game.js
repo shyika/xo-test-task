@@ -3,17 +3,22 @@ import {cloneDeep} from 'lodash'
 
 const {ADD_ITEM, CHANGE_ITEM_TURN, X, WIN, RESTART_GAME, EQUAL_GAME} = constants
 
+let size = 4
+let board = new Array(size)
+
+for (let i = 0; i < size; i++)
+	board[i] = new Array(size).fill(0)
+
+// 1 = X
+// -1 = O
+// 0 = blank tile
 const initialState = {
-	markup: [
-    ' ',' ',' ',
-    ' ',' ',' ',
-    ' ',' ',' '
-  ],
-  turn: X,
+	board,
+	size,
+  turn: 1,
   done: false,
-  combination: undefined,
   winner: undefined,
-  isEqual: false
+  isDraw: false
 }
 
 export default (game = initialState, action) => {
@@ -21,12 +26,12 @@ export default (game = initialState, action) => {
 
 	switch (type) {
 		case ADD_ITEM:
-				const newState = cloneDeep(game)
-				newState.markup.splice(payload.location, 1, payload.turn)
-				return newState
+				const ns = cloneDeep(game)
+				ns.board[payload.row][payload.col] = payload.turn
+				return ns
 		case CHANGE_ITEM_TURN:
 			return {...game, turn: payload.turn}
-		case WIN:
+		/*case WIN:
 			return {
 				...game,
 				done: payload.done,
@@ -36,7 +41,7 @@ export default (game = initialState, action) => {
 		case EQUAL_GAME:
 			return {...game, done: payload.done, isEqual: payload.isEqual}
 		case RESTART_GAME:
-			return {...initialState}
+			return {...initialState} */
 	}
 
 	return game

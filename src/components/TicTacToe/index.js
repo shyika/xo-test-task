@@ -2,10 +2,9 @@ import React from 'react'
 import {connect} from 'react-redux'
 import PropTypes from 'prop-types'
 
-import MarkupItem from '../MarkupItem'
+import BoardTile from '../BoardTile'
 import Result from '../Result'
-import {checkAndUpdateItem, checkEndOFGame, restartGame} from '../../AC'
-import {getClassesByCombination} from '../../logic/game'
+import {checkAndUpdateTile, isFinished, restartGame} from '../../AC'
 
 
 import './styles.less'
@@ -15,38 +14,32 @@ class TicTacToe extends React.Component {
 	static propTypes = {
 		// from connect
 		gameState: PropTypes.shape({
-			markup: PropTypes.array.isRequired,
-			turn: PropTypes.string.isRequired,
+			board: PropTypes.array.isRequired,
+			turn: PropTypes.number,
 			done: PropTypes.bool.isRequired,
-			combination: PropTypes.string,
-			winner: PropTypes.oneOfType([PropTypes.string]),
-			isEqual: PropTypes.bool
+			winner: PropTypes.string,
+			isDraw: PropTypes.bool
 		})
 	}
 
-	updateItem = (pos, turn) => (e) => {
-		this.props.checkAndUpdateItem(pos, turn)
+	updateTile = (row, col) => () => {
+		this.props.checkAndUpdateTile(row, col)
 	}
 
-	componentWillReceiveProps({checkEndOFGame}) {
-		checkEndOFGame()
+	componentWillReceiveProps({isFinished}) {
+		isFinished()
 	}
 
 	restartGame = () => {
-		this.props.restartGame()
+		// this.props.restartGame()
 	}
 
 	render() {
-		const {turn, done, isEqual, winner, combination} = this.props.gameState
-		const resultParams = {isEqual, winner, restartGame: this.restartGame}
+		// const {turn, done, isEqual, winner, combination} = this.props.gameState
+		// const resultParams = {isEqual, winner, restartGame: this.restartGame}
 
-		const classes = getClassesByCombination(combination)
-
-		const gameMarkup = this.props.gameState.markup.map((val, i) => {
-			return (
-				<MarkupItem key={i} val={val} pos={i} cl={classes[i]} turn={turn} updateItem={this.updateItem} />
-			)
-		})
+		// const classes = getClassesByCombination(combination)
+		const {board, turn} = this.props.gameState
 
 		return (
 				<div className="container">
@@ -57,11 +50,18 @@ class TicTacToe extends React.Component {
 						</div>
 					</div>
 					<div className="row">
-						<div className="cc col-sm-9 col-12 col-lg-5">
-							{done && <Result {...resultParams}/>}
-							<div className="row">
-								{gameMarkup}
-							</div>
+						<div className="col-12 col-sm-12">
+						<table className="table table-bordered">
+							<tbody>
+								{this.props.gameState.board.map((r, i) =>
+									<tr key={i}>
+										{r.map((c, j) =>
+											<BoardTile row={i} updateTile={this.updateTile} val={c} col={j} key={j} />
+										)}
+									</tr>
+								)}
+							</tbody>
+						</table>
 						</div>
 					</div>
 				</div>
@@ -73,4 +73,4 @@ export default connect(state => {
 	return {
 		gameState: state.game
 	}
-}, {checkAndUpdateItem, checkEndOFGame, restartGame})(TicTacToe)
+}, {checkAndUpdateTile, isFinished})(TicTacToe)
