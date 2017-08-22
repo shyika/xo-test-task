@@ -1,9 +1,10 @@
 import constants from '../constants'
 import {cloneDeep} from 'lodash'
 
-const {ADD_ITEM, CHANGE_ITEM_TURN, X, WIN, RESTART_GAME, EQUAL_GAME} = constants
+const {ADD_ITEM, DRAW_GAME, CHANGE_ITEM_TURN, X, WIN, RESTART_GAME, EQUAL_GAME, CHANGE_GRID_SIZE} = constants
 
-let size = 4
+// There is size by default
+let size = 3
 let board = new Array(size)
 
 for (let i = 0; i < size; i++)
@@ -31,17 +32,18 @@ export default (game = initialState, action) => {
 				return ns
 		case CHANGE_ITEM_TURN:
 			return {...game, turn: payload.turn}
-		/*case WIN:
+		case DRAW_GAME:
+			return {...game, done: payload.done, isDraw: payload.isDraw}
+		case WIN:
 			return {
 				...game,
 				done: payload.done,
-				combination: payload.combination,
 				winner: payload.winner
 			}
-		case EQUAL_GAME:
-			return {...game, done: payload.done, isEqual: payload.isEqual}
 		case RESTART_GAME:
-			return {...initialState} */
+			return {...initialState, board: payload.board, size: payload.size}
+		case CHANGE_GRID_SIZE:
+			return {...initialState, board: payload.board, size: payload.size}
 	}
 
 	return game

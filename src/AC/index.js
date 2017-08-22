@@ -1,24 +1,33 @@
 import constants from '../constants'
-import {getStatus} from '../logic/game'
 
-const {ADD_ITEM, CHANGE_ITEM_TURN, X, O} = constants
+const {ADD_ITEM, CHANGE_ITEM_TURN, X, O, DRAW_GAME, WIN, RESTART_GAME, CHANGE_GRID_SIZE} = constants
 
 function getNextTurn(t) {
 	return (t === 1)? -1: 1
 }
 
-function retResObj(winner: null, done=true, isDraw=false) {
-	return {done, winner}
+function initNBoard(size) {
+	let board = new Array(size)
+	for (let i = 0; i < size; i++)
+		board[i] = new Array(size).fill(0)
+	return board
+}
+
+function retResObj(winner: null, done=false, isDraw=false) {
+	return {done, winner, isDraw}
 }
 
 function getResult(b, size) {
-	// Check rows
+	let dCount = 0
+	// Check rows and isDraw
 	for (let i = 0; i < size; i++) {
 		let rSum = 0
-		for (let j = 0; j < size; j++)
+		for (let j = 0; j < size; j++) {
 			rSum += b[i][j]
-		if (rSum === size) return retResObj(X)
-		else if (rSum === -size) return retResObj(O)
+			if (b[i][j] === 0) dCount++
+		}
+		if (rSum === size) return retResObj(X, true)
+		else if (rSum === -size) return retResObj(O, true)
 	}
 
 	// Check columns
@@ -26,16 +35,16 @@ function getResult(b, size) {
 		let cSum = 0
 		for (let j = 0; j < size; j++)
 			cSum += b[j][i]
-		if (cSum === size) return retResObj(X)
-		else if (cSum === -size) return retResObj(O)
+		if (cSum === size) return retResObj(X, true)
+		else if (cSum === -size) return retResObj(O, true)
 	}
 
 	// Check left diagonale
 	let lDSum = 0
 	for (let i = 0; i < size; i++)
 		lDSum += b[i][i]
-	if (lDSum === size) return retResObj(X)
-	else if (lDSum === -size) return retResObj(O)
+	if (lDSum === size) return retResObj(X, true)
+	else if (lDSum === -size) return retResObj(O, true)
 
 	// Check right diagonale
 	let rDSum = 0
@@ -44,17 +53,21 @@ function getResult(b, size) {
 		rDSum += b[i][rs]
 		rs--
 	}
-	if (rDSum === size) return retResObj(X)
-	else if (rDSum === -size) return retResObj(O)
+	if (rDSum === size) return retResObj(X, true)
+	else if (rDSum === -size) return retResObj(O, true)
+
+	if (!dCount) return retResObj(null, true, true)
 
 	return retResObj()
 }
 
-export function restartGame() {
-	const {RESTART_GAME} = constants
+export function restartGame(size) {
+	const board = initNBoard(size)
 	return {
 		type: RESTART_GAME,
-		payload: {}
+		payload: {
+			board, size
+		}
 	}
 }
 
@@ -86,13 +99,16 @@ export function isFinished() {
 		const {board, size} = game
 		const res = getResult(board, size)
 
-		console.info(res)
-
-		// const {done, combination, winner, isEqual} = getStatus(game.markup)
-		// if (done) {
-		// 	(!isEqual) ?
-		// 		dispatch({type:WIN,payload:{done,combination,winner}}) :
-		// 		dispatch({type:EQUAL_GAME,payload:{done,isEqual}})
-		// }
+		// Handle results
+		const {done, winner, isDraw} = res
+		if (done)
+			(isDraw)?
+				dispatch({type: DRAW_GAME, payload: {done, isDraw}}) :
+				dispatch({type: WIN, payload: {done, winner}})
 	}
+}
+
+export function changeGridSize(size) {
+	const board = initNBoard(size)
+	return dispatch => dispatch({type: CHANGE_GRID_SIZE, payload: {size, board}})
 }
