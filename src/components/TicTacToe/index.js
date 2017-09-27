@@ -6,6 +6,7 @@ import BoardTile from '../BoardTile'
 import Result from '../Result'
 import {checkAndUpdateTile, isFinished, restartGame, changeGridSize} from '../../AC'
 
+import {FormattedMessage, injectIntl} from 'react-intl'
 
 import './styles.less'
 
@@ -59,7 +60,7 @@ class TicTacToe extends React.PureComponent {
             <div className="col-12 col-sm-12">
               <h1 class="text-center">Titck tak toe simple game!</h1>
               <hr/>
-              <h3>Change grid size</h3>
+              <h3><FormattedMessage id="ttt.changeGridSize" defaultMessage="Change grid size!" /></h3>
               <p>Current board grid is {size}</p>
               <form onSubmit={this.handleSubmit} class="form-inline">
                 <div class="form-group">

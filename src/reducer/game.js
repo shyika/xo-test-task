@@ -19,7 +19,8 @@ const initialState = {
   turn: 1,
   done: false,
   winner: undefined,
-  isDraw: false
+  isDraw: false,
+  locale: 'en'
 }
 
 export default (game = initialState, action) => {
